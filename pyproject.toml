@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "neural-circuits"
+version = "0.1.0"
+description = "neural circuit project beginning with XNOR/NAND-based Binary Attention Network"
+authors = ["Choi Soon Ho <sosaror@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "neural_circuits"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+
+[tool.poetry.group.dev.dependencies]
+torch = "*"
+torchvision = "*"
+pytorch-lightning = "^2.5.0.post0"
+pytest = "^8.3.4"
+
+# CUDA version must be manually set by the user
+[tool.poetry.group.cuda.dependencies]
+torch = {version = "*", source = "pytorch-cuda"}
+torchvision = {version = "*", source = "pytorch-cuda"}
+
+[[tool.poetry.source]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu121"  # Default CUDA 12.1, User should change this!
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,32 @@
+# Ignore Python cache & compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# Ignore virtual environments
+venv/
+.env/
+.venv/
+
+# Ignore Poetry-specific files
+poetry.lock
+
+# Ignore dataset & output logs
+data/
+logs/
+checkpoints/
+wandb/
+lightning_logs/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore VSCode & PyCharm settings
+.vscode/
+.idea/
