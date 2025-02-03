@@ -1,11 +1,11 @@
 # Neural Circuits: XNOR/NAND-Based Binary Attention Networks
 
-This repository contains an implementation of **XNOR/NAND-based Binary Attention Networks** built using **PyTorch Lightning** and **Poetry** for efficient dependency management.
+This repository contains an implementation of **XOR/NAND-based Binary Attention Networks** built using **PyTorch Lightning** and **Poetry** for efficient dependency management.
 
 This project was developed in collaboration with **ChatGPT** to explore innovative approaches to binary attention mechanisms.
 
 ## 🚀 Features
-- Fully binary attention mechanism using **XNOR/NAND logic gates**
+- Fully binary attention mechanism using **XOR/NAND logic gates**
 - **PyTorch Lightning** for modular training and scalability
 - **Poetry-based environment** for reproducibility
 - Supports both **CPU and CUDA** installations
@@ -16,7 +16,7 @@ This project was developed in collaboration with **ChatGPT** to explore innovati
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/your-repo/neural-circuits.git
+git clone https://github.com/Snow0821/neural-circuits.git
 cd neural-circuits
 ```
 
@@ -104,8 +104,8 @@ If you use this repository, please cite as follows:
 
 **Author:** Choi Soon Ho  
 **Title:** XNOR/NAND-based Binary Attention Networks  
-**Repository:** [GitHub Link](https://github.com/Neural-Circuits)  
-**Year:** 2024  
+**Repository:** https://github.com/Neural-Circuits
+**Year:** 2025  
 
 For academic citation, use:
 ```bibtex
