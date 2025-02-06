@@ -8,21 +8,27 @@ import neural_circuits as nc
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
+class BinarizeAndFlatten:
+    def __call__(self, x):
+        return (x > 0.5).float().flatten()
+
+
+
 def preprocess_mnist():
     """
     Loads and preprocesses the MNIST dataset by binarizing the images.
     Returns train and test DataLoaders.
     """
     transform = transforms.Compose([
-        transforms.ToTensor(),  # Convert to tensor
-        lambda x: (x > 0.5).float().view(-1)  # Binarize & Flatten to 1D
+    transforms.ToTensor(),
+    BinarizeAndFlatten()  # Binarize & Flatten to 1D
     ])
 
     train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
     test_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
 
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, persistent_workers=True, multiprocessing_context="spawn", num_workers=7)
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, persistent_workers=True, multiprocessing_context="spawn", num_workers=7)
 
     return train_loader, test_loader
 
@@ -88,12 +94,33 @@ class MNISTTrainer(pl.LightningModule):
         self.test_acc.reset()
 
 import matplotlib.pyplot as plt
+import pandas as pd
+import os
 
-def plot_accuracy(model):
+def plot_accuracy_from_csv(logger):
+    log_dir = logger.log_dir  # 로그 파일이 저장된 디렉토리
+    csv_path = os.path.join(log_dir, "metrics.csv")  # Lightning의 CSV 로깅 경로
+
+    if not os.path.exists(csv_path):
+        print(f"⚠ No CSV log file found at {csv_path}! Check if logging is enabled.")
+        return
+
+    # CSV 파일 불러오기
+    df = pd.read_csv(csv_path)
+
+    if 'train_acc_epoch' not in df.columns or 'test_acc' not in df.columns:
+        print("⚠ 'train_acc_epoch' 또는 'test_acc' 컬럼이 CSV 로그에 존재하지 않습니다.")
+        print("로그된 컬럼 목록:", df.columns)
+        return
+
+    # 정확도 데이터 가져오기
+    epochs = df["epoch"]
+    train_acc = df["train_acc_epoch"]
+    test_acc = df["test_acc"]
+
     plt.figure(figsize=(8, 6))
-    
-    plt.plot(model.epoch_log, model.train_acc_log, label="Train Accuracy", marker='o')
-    plt.plot(model.epoch_log, model.test_acc_log, label="Test Accuracy", marker='s')
+    plt.plot(epochs, train_acc, label="Train Accuracy", marker='o')
+    plt.plot(epochs, test_acc, label="Test Accuracy", marker='s')
 
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
@@ -103,12 +130,23 @@ def plot_accuracy(model):
     plt.show()
 
 if __name__ == "__main__":
+    device = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
     train_loader, test_loader = preprocess_mnist()
+
+    from pytorch_lightning.loggers import CSVLogger
+
+    logger = CSVLogger("logs", name="binary_mnist")
+
+    # Initialize model
     model = MNISTTrainer()
 
     # Training
-    trainer = pl.Trainer(max_epochs=5, accelerator="gpu" if torch.cuda.is_available() else "cpu")
-    trainer.fit(model, train_loader)
+    trainer = pl.Trainer(
+        max_epochs=100, 
+        accelerator=device,
+        logger=logger
+    )
+    trainer.fit(model, train_loader, test_loader)
 
-    # Plot accuracy
-    plot_accuracy(model)
+    # CSV Logger를 활용한 정확도 시각화
+    plot_accuracy_from_csv(logger)

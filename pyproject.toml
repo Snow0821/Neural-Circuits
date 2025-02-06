@@ -8,24 +8,13 @@ readme = "README.md"
 packages = [{include = "neural_circuits"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = ">=3.10,<3.13"
 
 [tool.poetry.group.dev.dependencies]
-torch = "*"
-torchvision = "*"
 pytorch-lightning = "^2.5.0.post0"
 pytest = "^8.3.4"
-
-# CUDA version must be manually set by the user
 matplotlib = "^3.10.0"
-[tool.poetry.group.cuda.dependencies]
-torch = {version = "*", source = "pytorch-cuda"}
-torchvision = {version = "*", source = "pytorch-cuda"}
-
-[[tool.poetry.source]]
-name = "pytorch-cuda"
-url = "https://download.pytorch.org/whl/cu126"  # Default CUDA 12.6, User should change this!
-priority = "explicit"
+pandas = "^2.2.3"
 
 [build-system]
 requires = ["poetry-core"]
